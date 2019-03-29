@@ -1,0 +1,110 @@
+<html>
+<head>
+
+  <script src="fabric.min.js" ></script>
+  <script src="jquery-2.1.0.min.js" ></script>
+  <style>
+    .canvas-container{
+      position: absolute;
+      left: 50px;
+    }
+    .canvas-ui{
+      z-index: 2;
+      position:absolute;
+      left: 10px;
+      top: 50px;
+    }
+    .canvas-ui span.btn{
+      display: block;
+      clear: both;
+      width: 30px;
+      height: 30px;
+      margin-top: 20px;
+    }
+    .canvas-ui .btn {
+      border: 1px solid rgb(200,200,200);
+      border-radius: 5px;
+    }
+    .canvas-ui .active{
+      border: 2px solid rgb(0,0,0);
+    }
+    .canvas-ui img{
+      width:100%;
+      border-radius: 5px;
+      background: white;
+    }
+    .canvas-ui .btn:hover, #fill_color:hover{
+      box-shadow: 0px 2px 5px rgba(0,0,0,.25);
+    }
+    #fill_color{
+      width: 32px;
+      height: 33px;
+      border-radius: 5px;
+      border: 1px solid rgb(200,200,200);
+    }
+    #stroke_color{
+      opacity: 0;
+      position: absolute;
+      z-index:5;
+    }
+    #stroke{
+      border: 2px solid #c0c0c0;
+      width: 18px;
+      height: 18px;
+      margin: 4px;
+      position: absolute;
+    }
+    #stroke_size {
+      width: 25px;
+      position: absolute;
+      left: 36px;
+      top: 59px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="canvas-container" style=" user-select: none;">
+    <canvas id="c" width="900" height="900" style="border: 1px solid rgb(170, 170, 170); position: absolute; width: 450px; height: 450px; left: 0px; top: 0px; touch-action: none; user-select: none;" class="lower-canvas"></canvas>
+
+  </div>
+
+  <div class="canvas-ui" style="display: inline-block; margin-left: 10px">
+    <span ><input type="color" id="fill_color"> </span>
+    <span class="btn"><input type="color" id="stroke_color"><span id="stroke"></span> </span>
+    <input id="stroke_size" type="number" value="1" min=0 max=20/>
+    <span id="select" class="btn active"><img src="ui/select.png" /> </span>
+    <span id="circle" class="btn"><img src="ui/circle.png" /> </span>
+    <span id="rect" class="btn"><img src="ui/rect.png" /> </span>
+    <span id="curve" class="btn"><img src="ui/curve.png" /> </span>
+    <span id="discard" class="btn"><img src="ui/trash.png" /> </span>
+
+
+    <!--
+    <button id="group" class="btn btn-info">Group selected objecs</button><br>
+    <button id="ungroup" class="btn btn-info">Ungroup selected objects</button><br>
+    <button id="multiselect" class="btn btn-info">Make a multiselection</button><br>
+    <button id="addmore" class="btn btn-info">Add more shapes</button><br>
+    -->
+  </div>
+
+  <script src="draw.js" ></script>
+  <script>
+    $("#group").click(function(){
+      console.log("group clicked");
+      if (!canvas.getActiveObject()) {
+        return;
+      }
+      if (canvas.getActiveObject().type !== 'activeSelection') {
+        return;
+      }
+      canvas.getActiveObject().toGroup();
+      canvas.requestRenderAll();
+    });
+    </script>
+
+</body>
+
+
+</html>
