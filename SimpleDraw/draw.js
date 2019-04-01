@@ -75,13 +75,15 @@
     }
   }
 
-  var canvas = this.__canvas = new fabric.Canvas('c');
+  var canvas = this.__canvas = new fabric.Canvas('c', { selection: false });
   canvas.setDimensions({width: 500, height: 500});
   var active_obj, fill_color, stroke_color, stroke_size;
   stroke_color = "#c0c0c0";
   stroke_size = 1;
   var active_tool = 'select';
-
+  var shape_origin, shape_w, shape_h;
+  var mousedown = false;
+  var new_rect, new_circle;
 
   fabric.Object.prototype.transparentCorners = false;
   fabric.Object.prototype.cornerSize = 8;
@@ -96,9 +98,87 @@
     'selection:created': updateControls,
     'selection:updated': updateControls
   });
+  canvas.on('mouse:down', function(e){
+    shape_origin = e.pointer;
+    mousedown = true;
+    //console.log(shape_origin);
+    var pointer = e.pointer;
+
+    if(active_tool=="rect"){
+      new_rect = new fabric.Rect({
+        top: shape_origin.y,
+        left: shape_origin.x,
+        originX: 'left',
+        originY: 'top',
+        angle:0,
+        width: pointer.x - shape_origin.x,
+        height: pointer.y - shape_origin.y,
+        fill: fill_color,
+        strokeWidth: 1 ,
+        stroke: stroke_color
+      });
+      canvas.add(new_rect);
+    }
+
+    if(active_tool=="circle"){
+      new_circle = new fabric.Circle({
+        top: shape_origin.y,
+        left: shape_origin.x,
+        originX: 'left',
+        originY: 'top',
+        angle:0,
+        radius: pointer.x - shape_origin.x,
+        //rx: pointer.x - shape_origin.x,
+        fill: fill_color,
+        strokeWidth: 1 ,
+        stroke: stroke_color
+      });
+      canvas.add(new_circle);
+    }
+
+  });
+  canvas.on('mouse:move', function(e){
+    if (mousedown){
+      var pointer = e.pointer;
+
+      if(active_tool=="rect"){
+        if(shape_origin.x>pointer.x){
+          new_rect.set({ left: Math.abs(pointer.x) });
+        }
+        if(shape_origin.y>pointer.y){
+          new_rect.set({ top: Math.abs(pointer.y) });
+        }
+          new_rect.set({ width: Math.abs(shape_origin.x - pointer.x) });
+          new_rect.set({ height: Math.abs(shape_origin.y - pointer.y) });
+      }
+
+      if(active_tool=="circle"){
+        if(shape_origin.x>pointer.x){
+          new_circle.set({ left: Math.abs(pointer.x) });
+        }
+        if(shape_origin.y>pointer.y){
+          new_circle.set({ top: Math.abs(pointer.y) });
+        }
+          new_circle.set({ radius: Math.abs(shape_origin.x - pointer.x) });
+          //new_circle.set({ height: Math.abs(shape_origin.y - pointer.y) });
+      }
+
+      canvas.renderAll();
+    }
+  });
+
+  canvas.on('mouse:up', function(e){
+    mousedown = false;
+  });
 
   $("#select").click(function(){
     setTool("select");
+  });
+  $("#rect").click(function(){
+    setTool("rect");
+  });
+  $("#circle").click(function(){
+    setTool("circle");
   });
 
   $("#curve").click(function(){
